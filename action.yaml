@@ -35,7 +35,7 @@ runs:
         app: ${{ inputs.app }}
         dryRun: ${{ inputs.dryRun }}
         contentDirectories: |
-          cfn: ${{ inputs.templateDirectory }}
+          cfn: [${{ inputs.templateDirectory }}]
         config: |
           stacks:
             - deploy
