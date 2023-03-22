@@ -26,7 +26,9 @@ runs:
         aws-region: eu-west-1
         role-to-assume: ${{ inputs.guActionsRiffRaffRoleArn }}
 
-    - run: echo "FILENAME=$(basename ${{ inputs.templatePath }})" >> $GITHUB_ENV
+    - name: Retrieve filename
+      shell: bash
+      run: echo "FILENAME=$(basename ${{ inputs.templatePath }})" >> $GITHUB_ENV
 
     - uses: guardian/actions-riff-raff@v2
       with:
