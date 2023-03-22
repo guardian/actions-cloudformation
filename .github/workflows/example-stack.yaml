@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template
+Resources:
+  MadeUpResource: # As we never want to actually deploy this stack.
+    Type: "AWS::DOES::NotExist"
+    Properties:
+      Foo: abc
+      Bar: def
