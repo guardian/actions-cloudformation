@@ -1,0 +1,47 @@
+name: "guardian/actions-cloudformation"
+description: "Deploy a (static) Cloudformation template. Useful if you haven't migrated to CDK yet but want to avoid manual deploys."
+inputs:
+  app:
+    description: "App name (pattern: [a-zA-Z-]+)."
+    required: true
+  stack:
+    description: "A (Riffraff) stack to deploy into, e.g. 'deploy', 'frontend', etc. See Riffraff for the full list of supported stacks."
+    required: true
+  templatePath:
+    description: "Path to template file, e.g. './cloudformation/cfn.json'."
+    required: true
+  guActionsRiffRaffRoleArn:
+    description: "Role to use for writing to Riffraff's AWS bucket (typically org secret of same name)."
+    required: true
+  dryRun:
+    description: "If set to true, will not upload Riffraff artifact."
+    default: false
+runs:
+  # Note composite steps do not have direct access to secrets, or inputs (via
+  # env) so need to be passed them explicitly :(. Sad times I know.
+  using: "composite"
+  steps:
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ inputs.guActionsRiffRaffRoleArn }}
+
+    - run: echo "FILENAME=$(basename ${{ inputs.templatePath }})" >> $GITHUB_ENV
+
+    - uses: guardian/actions-riff-raff@v2
+      with:
+        app: ${{ inputs.app }}
+        dryRun: ${{ inputs.dryRun }}
+        contentDirectories: |
+          cfn: ${{ inputs.templateDirectory }}
+        config: |
+          stacks:
+            - deploy
+          regions:
+            - eu-west-1
+          deployments:
+            cfn:
+              type: cloud-formation
+              app: ${{ inputs.app }}
+              parameters:
+                templatePath: ${{ env.FILENAME }}
