@@ -38,7 +38,7 @@ runs:
           cfn: [${{ inputs.templatePath }}]
         config: |
           stacks:
-            - deploy
+            - ${{ inputs.stack }}
           regions:
             - eu-west-1
           deployments:
